@@ -1,0 +1,477 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tiky — Vos biens. Prouvés. Protégés.</title>
+  <meta name="description" content="Tiky, l'inventaire intelligent de votre patrimoine mobilier : photos, factures, valeur en temps réel et dossier sinistre prêt pour votre assureur.">
+  <meta name="theme-color" content="#050B1C">
+  <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Unbounded:wght@300;500;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="is-loading">
+
+<!-- Logo symbol, reused everywhere -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="tg" x1="0" y1="0" x2="1" y2="0.35"><stop offset="0" stop-color="#52F196"/><stop offset="1" stop-color="#36B3F5"/></linearGradient>
+    <linearGradient id="tgd" x1="0" y1="0" x2="1" y2="0.35"><stop offset="0" stop-color="#2FC79F"/><stop offset="1" stop-color="#2A9FD0"/></linearGradient>
+    <symbol id="tiky-logo" viewBox="80 100 890 740">
+      <g fill="url(#tg)">
+        <polygon points="92,118 460,118 92,440"/>
+        <polygon points="460,118 705,118 955,435 705,435"/>
+        <polygon points="262,435 572,826 262,826"/>
+        <polygon points="708,435 708,826 572,826 485,712 540,645"/>
+      </g>
+      <g fill="url(#tgd)">
+        <polygon points="270,285 460,118 590,285"/>
+        <polygon points="262,435 420,435 420,635"/>
+        <polygon points="540,435 708,435 540,645"/>
+      </g>
+    </symbol>
+  </defs>
+</svg>
+
+<!-- ============ PRELOADER ============ -->
+<div class="loader" id="loader">
+  <div class="loader__grid"></div>
+  <div class="loader__center">
+    <svg class="loader__logo"><use href="#tiky-logo"/></svg>
+    <div class="loader__pct"><span id="loader-pct">0</span><small>%</small></div>
+    <p class="loader__status mono" id="loader-status">Initialisation du coffre…</p>
+  </div>
+  <div class="loader__enter" id="loader-enter">
+    <button class="btn btn--glow magnetic" id="enter-sound" data-cursor="Entrer">
+      <span>Ouvrir le coffre</span>
+    </button>
+    <button class="loader__mute mono" id="enter-silent">Entrer sans le son</button>
+    <p class="loader__hint mono">◉ Expérience sonore recommandée</p>
+  </div>
+  <div class="loader__corner loader__corner--tl mono">TIKY / SYS.01</div>
+  <div class="loader__corner loader__corner--tr mono">48.8566° N — 2.3522° E</div>
+  <div class="loader__corner loader__corner--bl mono">Patrimoine mobilier · Inventaire · Preuves</div>
+  <div class="loader__corner loader__corner--br mono">© 2026</div>
+</div>
+
+<!-- ============ WEBGL ============ -->
+<canvas id="gl" aria-hidden="true"></canvas>
+<div class="grain" aria-hidden="true"></div>
+<div class="vignette" aria-hidden="true"></div>
+
+<!-- ============ CURSOR ============ -->
+<div class="cursor" aria-hidden="true"><div class="cursor__ring"><span class="cursor__label"></span></div><div class="cursor__dot"></div></div>
+
+<!-- ============ NAV ============ -->
+<header class="nav" id="nav">
+  <a href="#top" class="nav__brand" aria-label="Tiky, accueil">
+    <svg><use href="#tiky-logo"/></svg>
+    <span>TIKY</span>
+  </a>
+  <nav class="nav__links">
+    <a href="#how">Comment ça marche</a>
+    <a href="#features">Fonctionnalités</a>
+    <a href="#sinistre">Sinistre</a>
+    <a href="#pricing">Tarifs</a>
+    <a href="#faq">FAQ</a>
+  </nav>
+  <div class="nav__right">
+    <button class="sound" id="sound-toggle" aria-label="Activer ou couper le son" data-cursor="Son">
+      <i></i><i></i><i></i><i></i><i></i>
+    </button>
+    <a href="#join" class="btn btn--small magnetic"><span>Rejoindre la bêta</span></a>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- ============ HERO ============ -->
+  <section class="hero" data-morph="logo">
+    <div class="hero__meta mono">
+      <span>[ 001 ]</span><span>Inventaire intelligent du patrimoine mobilier</span>
+    </div>
+    <h1 class="hero__title">
+      <span class="line"><span>Vos biens.</span></span>
+      <span class="line"><span>Prouvés.</span></span>
+      <span class="line"><span class="grad">Protégés.</span></span>
+    </h1>
+    <div class="hero__side">
+      <p class="hero__lead">Photographiez. Scannez la facture. Tiky calcule la valeur de tout ce que vous possédez et prépare votre dossier d'assurance avant même que vous en ayez besoin.</p>
+      <div class="hero__ctas">
+        <a href="#join" class="btn btn--glow magnetic"><span>Commencer gratuitement</span></a>
+        <a href="#how" class="btn btn--ghost magnetic"><span>Voir la démo</span></a>
+      </div>
+    </div>
+    <div class="hero__scroll mono"><span>Scroll</span><i></i></div>
+  </section>
+
+  <!-- ============ MANIFESTO ============ -->
+  <section class="manifesto" data-morph="chaos">
+    <p class="eyebrow mono">[ 002 ] Le problème</p>
+    <p class="manifesto__text" data-scrub-words>Cambriolage, incendie, dégât des eaux. Le jour où tout bascule, votre assureur ne vous demandera qu'une chose : des preuves. Des factures perdues. Des photos introuvables. Des valeurs oubliées. Et une indemnisation au rabais.</p>
+  </section>
+
+  <!-- ============ VALUE ============ -->
+  <section class="value" data-morph="euro" data-dim="0.45">
+    <div class="value__inner">
+      <p class="eyebrow mono">[ 003 ] La révélation</p>
+      <h2 class="h2 reveal">Votre patrimoine,<br>affiché comme <span class="grad">un solde bancaire.</span></h2>
+      <div class="value__counter">
+        <span class="value__num mono" data-count="18700">0</span><span class="value__cur">€</span>
+      </div>
+      <p class="value__caption">Une montre, un sac, un ordinateur, un vélo. Quatre objets, et déjà le prix d'une voiture. Combien vaut <em>vraiment</em> votre intérieur ?</p>
+      <div class="value__chips">
+        <div class="chip" style="--d:0"><span class="chip__ico">⌚</span><span>Montre automatique</span><b class="mono">9 800 €</b></div>
+        <div class="chip" style="--d:1"><span class="chip__ico">👜</span><span>Sac en cuir</span><b class="mono">2 900 €</b></div>
+        <div class="chip" style="--d:2"><span class="chip__ico">💻</span><span>MacBook Pro</span><b class="mono">2 499 €</b></div>
+        <div class="chip" style="--d:3"><span class="chip__ico">🚲</span><span>Vélo électrique</span><b class="mono">3 501 €</b></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ HOW IT WORKS (pinned phone) ============ -->
+  <section class="how" id="how" data-morph="galaxy" data-dim="0.55">
+    <div class="how__pin">
+      <div class="how__left">
+        <p class="eyebrow mono">[ 004 ] Comment ça marche</p>
+        <h2 class="h2">Trois gestes.<br><span class="grad">Zéro paperasse.</span></h2>
+        <ol class="how__steps">
+          <li class="how__step is-active">
+            <span class="how__n mono">01</span>
+            <div><h3>Photographiez</h3><p>Un cliché suffit. Tiky reconnaît l'objet et le range dans la bonne catégorie.</p></div>
+          </li>
+          <li class="how__step">
+            <span class="how__n mono">02</span>
+            <div><h3>Scannez la facture</h3><p>L'OCR extrait la marque, le prix et la date d'achat. La preuve est archivée, chiffrée, pour toujours.</p></div>
+          </li>
+          <li class="how__step">
+            <span class="how__n mono">03</span>
+            <div><h3>Regardez votre patrimoine grandir</h3><p>Valeur totale, répartition, garanties : tout se met à jour en temps réel.</p></div>
+          </li>
+        </ol>
+        <div class="how__bar"><i id="how-bar"></i></div>
+      </div>
+
+      <div class="how__right">
+        <div class="phone" id="phone">
+          <div class="phone__frame">
+            <div class="phone__notch"></div>
+            <div class="phone__screen">
+
+              <!-- Screen 1 : camera -->
+              <div class="scr scr--cam is-active">
+                <div class="cam__top mono"><span>● REC</span><span>Bijoux &amp; Montres</span></div>
+                <div class="cam__view">
+                  <div class="cam__corners"><i></i><i></i><i></i><i></i></div>
+                  <svg class="cam__watch" viewBox="0 0 120 200" aria-hidden="true">
+                    <rect x="38" y="0" width="44" height="52" rx="8" fill="#2b3a5c"/>
+                    <rect x="38" y="148" width="44" height="52" rx="8" fill="#2b3a5c"/>
+                    <circle cx="60" cy="100" r="50" fill="#1b2846" stroke="#c9d6f0" stroke-width="5"/>
+                    <circle cx="60" cy="100" r="40" fill="#0d1a35"/>
+                    <g stroke="#c9d6f0" stroke-width="2.5"><line x1="60" y1="64" x2="60" y2="72"/><line x1="96" y1="100" x2="88" y2="100"/><line x1="60" y1="136" x2="60" y2="128"/><line x1="24" y1="100" x2="32" y2="100"/></g>
+                    <line x1="60" y1="100" x2="60" y2="74" stroke="#52F196" stroke-width="3" stroke-linecap="round"/>
+                    <line x1="60" y1="100" x2="80" y2="108" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+                    <rect x="108" y="94" width="8" height="12" rx="2" fill="#c9d6f0"/>
+                  </svg>
+                  <div class="cam__scan"></div>
+                  <div class="cam__tag mono">Montre détectée · 98%</div>
+                </div>
+                <div class="cam__shutter"><i></i></div>
+              </div>
+
+              <!-- Screen 2 : invoice OCR -->
+              <div class="scr scr--ocr">
+                <div class="ocr__paper">
+                  <div class="ocr__head mono">FACTURE N° 2025-0312</div>
+                  <div class="ocr__line w80"></div><div class="ocr__line w60"></div>
+                  <div class="ocr__row hl hl1"><span>Montre automatique</span><span>9 800,00</span></div>
+                  <div class="ocr__line w70"></div>
+                  <div class="ocr__row hl hl2"><span>Date</span><span>12/03/2025</span></div>
+                  <div class="ocr__line w50"></div>
+                  <div class="ocr__row total hl hl3"><span>TOTAL TTC</span><span>9 800,00 €</span></div>
+                </div>
+                <div class="ocr__form">
+                  <div class="field f1"><label>Nom du bien</label><span>Montre automatique</span></div>
+                  <div class="field f2"><label>Date d'achat</label><span>12/03/2025</span></div>
+                  <div class="field f3"><label>Prix d'achat</label><span>9 800 €</span></div>
+                  <div class="ocr__ok mono">✓ Facture certifiée &amp; archivée</div>
+                </div>
+              </div>
+
+              <!-- Screen 3 : dashboard -->
+              <div class="scr scr--dash">
+                <div class="dash__hello"><svg><use href="#tiky-logo"/></svg><div><b>Tiky</b><small>Bonjour Valentin 👋</small></div></div>
+                <div class="dash__card">
+                  <small class="mono">PATRIMOINE TOTAL</small>
+                  <div class="dash__total mono"><span id="dash-total">0</span> €</div>
+                  <small>4 biens déclarés · <em>+9 800 € ce mois</em></small>
+                </div>
+                <div class="dash__row">
+                  <svg class="donut" viewBox="0 0 42 42">
+                    <circle cx="21" cy="21" r="15.9" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="5"/>
+                    <circle class="seg" cx="21" cy="21" r="15.9" fill="none" stroke="#52F196" stroke-width="5" stroke-dasharray="52 48" stroke-dashoffset="25"/>
+                    <circle class="seg" cx="21" cy="21" r="15.9" fill="none" stroke="#36B3F5" stroke-width="5" stroke-dasharray="19 81" stroke-dashoffset="-27"/>
+                    <circle class="seg" cx="21" cy="21" r="15.9" fill="none" stroke="#7C8CFF" stroke-width="5" stroke-dasharray="16 84" stroke-dashoffset="-46"/>
+                    <circle class="seg" cx="21" cy="21" r="15.9" fill="none" stroke="#FFB86B" stroke-width="5" stroke-dasharray="13 87" stroke-dashoffset="-62"/>
+                  </svg>
+                  <ul class="dash__legend">
+                    <li><i style="background:#52F196"></i>Bijoux &amp; Montres</li>
+                    <li><i style="background:#36B3F5"></i>Sports &amp; Loisirs</li>
+                    <li><i style="background:#7C8CFF"></i>Mode</li>
+                    <li><i style="background:#FFB86B"></i>Électronique</li>
+                  </ul>
+                </div>
+                <div class="dash__list">
+                  <div class="it"><span>⌚</span><p>Montre automatique<small>Facture ✓</small></p><b class="mono">9 800 €</b></div>
+                  <div class="it"><span>🚲</span><p>Vélo électrique<small>Facture ✓</small></p><b class="mono">3 501 €</b></div>
+                  <div class="it"><span>👜</span><p>Sac en cuir<small>Garantie 18 mois</small></p><b class="mono">2 900 €</b></div>
+                </div>
+                <div class="dash__tab"><i class="on"></i><i></i><b>+</b><i></i><i></i></div>
+              </div>
+
+            </div>
+          </div>
+          <div class="phone__glow"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FEATURES (bento) ============ -->
+  <section class="features" id="features" data-morph="galaxy" data-dim="0.35">
+    <div class="section-head">
+      <p class="eyebrow mono">[ 005 ] Fonctionnalités</p>
+      <h2 class="h2 reveal">Le coffre-fort <span class="grad">de tout ce qui compte.</span></h2>
+    </div>
+    <div class="bento">
+      <article class="card card--xl tilt">
+        <div class="card__glow"></div>
+        <span class="card__tag mono">Export assurance</span>
+        <h3>L'état estimatif des biens, généré en un clic.</h3>
+        <p>Le document exact que réclament les assureurs : liste détaillée, justificatifs, vétusté calculée, montant indemnisable. Prêt à envoyer.</p>
+        <div class="pdf">
+          <div class="pdf__page p3"></div><div class="pdf__page p2"></div>
+          <div class="pdf__page p1">
+            <div class="pdf__logo"><svg><use href="#tiky-logo"/></svg><span class="mono">Dossier n° T4829-1173</span></div>
+            <b>ÉTAT ESTIMATIF DES BIENS</b>
+            <small>Détruits, endommagés ou dérobés</small>
+            <div class="pdf__rows"><i></i><i></i><i></i><i></i><i></i></div>
+            <div class="pdf__stamp mono">CERTIFIÉ TIKY</div>
+          </div>
+        </div>
+      </article>
+      <article class="card tilt">
+        <div class="card__glow"></div>
+        <span class="card__tag mono">OCR</span>
+        <h3>Factures lues automatiquement</h3>
+        <p>Prix, date, enseigne : extraits en une seconde.</p>
+        <div class="ocrviz mono"><span>9 800,00 €</span><span>12/03/2025</span><span>Bijouterie</span></div>
+      </article>
+      <article class="card tilt">
+        <div class="card__glow"></div>
+        <span class="card__tag mono">Alertes</span>
+        <h3>Garanties sous surveillance</h3>
+        <p>Prévenu 7 jours avant chaque expiration.</p>
+        <div class="alert"><i></i><span>Garantie MacBook Pro</span><b class="mono">J-7</b></div>
+      </article>
+      <article class="card tilt">
+        <div class="card__glow"></div>
+        <span class="card__tag mono">Assistant IA</span>
+        <h3>Un expert sinistre dans la poche</h3>
+        <div class="chat">
+          <p class="chat__u">On m'a volé mon vélo, je fais quoi ?</p>
+          <p class="chat__a">Pas de panique. 1) Dépôt de plainte, 2) j'ai déjà préparé votre dossier avec la facture ✓</p>
+        </div>
+      </article>
+      <article class="card tilt">
+        <div class="card__glow"></div>
+        <span class="card__tag mono">Famille &amp; Pro</span>
+        <h3>Un inventaire, plusieurs mains</h3>
+        <p>Profils partagés, multi-logements, export comptable pour les pros.</p>
+        <div class="avatars"><i>V</i><i>C</i><i>L</i><i>+2</i></div>
+      </article>
+      <article class="card card--wide tilt">
+        <div class="card__glow"></div>
+        <span class="card__tag mono">Véhicules</span>
+        <h3>Le carnet d'entretien, enfin numérique.</h3>
+        <p>Scannez page par page, Tiky extrait dates, kilométrages et garages. Valeur Argus et prochaine révision en un coup d'œil.</p>
+        <div class="car">
+          <div class="car__km mono"><span>Prochaine révision</span><b>dans 5 000 km</b></div>
+          <div class="car__bar"><i></i></div>
+        </div>
+      </article>
+      <article class="card card--wide tilt">
+        <div class="card__glow"></div>
+        <span class="card__tag mono">Parrainage</span>
+        <h3>Invitez un proche, gagnez du Premium.</h3>
+        <p>1 mois offert pour vous et votre filleul à l'inscription, 3 mois de plus s'il passe Premium. Sans limite.</p>
+        <div class="ref mono"><span>tiky.app/ref/</span><b>VAL3NT1N</b><i>Copier</i></div>
+      </article>
+    </div>
+  </section>
+
+  <!-- ============ SINISTRE (horizontal) ============ -->
+  <section class="hscroll" id="sinistre" data-morph="chaos" data-dim="0.4">
+    <div class="hscroll__pin">
+      <div class="hscroll__track" id="htrack">
+        <div class="hpanel hpanel--intro">
+          <p class="eyebrow mono">[ 006 ] Le jour J</p>
+          <h2 class="h2">Quand tout bascule,<br><span class="grad">Tiky prend le relais.</span></h2>
+          <p class="hpanel__lead">Faites défiler →</p>
+        </div>
+        <div class="hpanel">
+          <span class="hpanel__n">01</span>
+          <h3>Cambriolage</h3>
+          <p>Sélectionnez les biens dérobés. Tiky génère le dossier complet, factures et photos en annexe, avec numéro de suivi.</p>
+          <div class="hpanel__ico">🔓</div>
+        </div>
+        <div class="hpanel">
+          <span class="hpanel__n">02</span>
+          <h3>Incendie</h3>
+          <p>Vos preuves ne sont pas chez vous : elles sont chiffrées et hébergées en Europe. Rien ne part en fumée.</p>
+          <div class="hpanel__ico">🔥</div>
+        </div>
+        <div class="hpanel">
+          <span class="hpanel__n">03</span>
+          <h3>Dégât des eaux</h3>
+          <p>Vétusté calculée par catégorie, valeur de remplacement estimée : vous savez ce qui vous est dû avant l'expert.</p>
+          <div class="hpanel__ico">💧</div>
+        </div>
+        <div class="hpanel">
+          <span class="hpanel__n">04</span>
+          <h3>À l'étranger</h3>
+          <p>Urgences locales, opposition carte, ambassade, commissariat le plus proche : l'assistance internationale vous guide pas à pas.</p>
+          <div class="hpanel__ico">🌍</div>
+        </div>
+        <div class="hpanel hpanel--end">
+          <span class="hpanel__n">05</span>
+          <h3>La conciergerie</h3>
+          <p>Avec Premium, Tiky envoie le dossier à votre assureur, en recommandé si besoin, et relance pour vous.</p>
+          <a href="#pricing" class="btn btn--glow magnetic"><span>Voir Premium</span></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ INSURERS MARQUEE ============ -->
+  <section class="insurers" data-morph="galaxy" data-dim="0.3">
+    <p class="eyebrow mono center">Quel que soit votre assureur</p>
+    <div class="marquee">
+      <div class="marquee__track">
+        <span>AXA</span><span>Allianz</span><span>MAIF</span><span>Macif</span><span>Matmut</span><span>Groupama</span><span>MMA</span><span>MAAF</span><span>GMF</span><span>Generali</span><span>Crédit Agricole</span><span>Direct Assurance</span><span>Crédit Mutuel</span><span>Banque Populaire</span><span>Caisse d'Épargne</span>
+        <span>AXA</span><span>Allianz</span><span>MAIF</span><span>Macif</span><span>Matmut</span><span>Groupama</span><span>MMA</span><span>MAAF</span><span>GMF</span><span>Generali</span><span>Crédit Agricole</span><span>Direct Assurance</span><span>Crédit Mutuel</span><span>Banque Populaire</span><span>Caisse d'Épargne</span>
+      </div>
+    </div>
+    <p class="insurers__note">Un dossier clair, structuré et lisible par n'importe quel gestionnaire sinistre.<br><small>Les marques citées appartiennent à leurs propriétaires respectifs. Tiky n'est affilié à aucun assureur.</small></p>
+  </section>
+
+  <!-- ============ SECURITY ============ -->
+  <section class="security" data-morph="shield" data-dim="0.8">
+    <div class="security__inner">
+      <p class="eyebrow mono">[ 007 ] Sécurité</p>
+      <h2 class="h2 reveal">Vos données valent<br><span class="grad">autant que vos biens.</span></h2>
+      <div class="sec-grid">
+        <div class="sec"><b class="mono">AES-256</b><span>Chiffrement de bout en bout, au repos comme en transit.</span></div>
+        <div class="sec"><b class="mono">EU</b><span>Hébergement en Europe. Vos preuves ne quittent pas l'UE.</span></div>
+        <div class="sec"><b class="mono">RGPD</b><span>Export et suppression de vos données en un clic.</span></div>
+        <div class="sec"><b class="mono">0 PUB</b><span>Jamais. Vos données ne sont pas un produit.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PRICING ============ -->
+  <section class="pricing" id="pricing" data-morph="galaxy" data-dim="0.3">
+    <div class="section-head">
+      <p class="eyebrow mono">[ 008 ] Tarifs</p>
+      <h2 class="h2 reveal">Commencez gratuit.<br><span class="grad">Passez Premium quand ça compte.</span></h2>
+      <div class="billing" role="group" aria-label="Période de facturation">
+        <button class="is-on" data-billing="m">Mensuel</button>
+        <button data-billing="y">Annuel <em>-17%</em></button>
+        <i class="billing__pill"></i>
+      </div>
+    </div>
+    <div class="plans">
+      <div class="plan tilt">
+        <div class="card__glow"></div>
+        <h3>Gratuit</h3>
+        <div class="plan__price"><b class="mono">0 €</b><small>pour toujours</small></div>
+        <ul><li>10 biens</li><li>Photos &amp; factures</li><li>Export PDF simple</li><li>Aucune publicité</li></ul>
+        <a href="#join" class="btn btn--ghost"><span>Démarrer</span></a>
+      </div>
+      <div class="plan plan--hot tilt">
+        <div class="card__glow"></div>
+        <span class="plan__badge mono">Le plus choisi</span>
+        <h3>Premium</h3>
+        <div class="plan__price"><b class="mono" data-m="5,99 €" data-y="59 €">5,99 €</b><small data-m="/ mois" data-y="/ an">/ mois</small></div>
+        <ul><li>Biens illimités</li><li>OCR automatique</li><li>Estimation de valeur</li><li>Export certifié &amp; horodaté</li><li>Conciergerie sinistre</li><li>Assistance internationale</li></ul>
+        <a href="#join" class="btn btn--glow"><span>Essai 14 jours</span></a>
+      </div>
+      <div class="plan tilt">
+        <div class="card__glow"></div>
+        <h3>Famille</h3>
+        <div class="plan__price"><b class="mono" data-m="9,99 €" data-y="99 €">9,99 €</b><small data-m="/ mois" data-y="/ an">/ mois</small></div>
+        <ul><li>Tout Premium</li><li>5 profils</li><li>Multi-logements</li><li>Dashboard consolidé</li></ul>
+        <a href="#join" class="btn btn--ghost"><span>Choisir</span></a>
+      </div>
+      <div class="plan tilt">
+        <div class="card__glow"></div>
+        <h3>Pro</h3>
+        <div class="plan__price"><b class="mono" data-m="14,99 €" data-y="149 €">14,99 €</b><small data-m="/ mois" data-y="/ an">/ mois</small></div>
+        <ul><li>Tout Premium</li><li>Utilisateurs illimités</li><li>SIRET / TVA</li><li>Export comptable CSV</li></ul>
+        <a href="#join" class="btn btn--ghost"><span>Choisir</span></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FAQ ============ -->
+  <section class="faq" id="faq" data-morph="galaxy" data-dim="0.25">
+    <div class="section-head">
+      <p class="eyebrow mono">[ 009 ] Questions</p>
+      <h2 class="h2 reveal">On vous dit <span class="grad">tout.</span></h2>
+    </div>
+    <div class="faq__list">
+      <div class="qa"><button class="qa__q"><span>Mon assureur acceptera-t-il le dossier Tiky ?</span><i></i></button><div class="qa__a"><div><p>Tiky génère un « état estimatif des biens », le format que les assureurs demandent après un sinistre : liste détaillée, justificatifs, dates et prix d'achat. Vous l'envoyez comme n'importe quel document.</p></div></div></div>
+      <div class="qa"><button class="qa__q"><span>Et si j'ai perdu mes factures ?</span><i></i></button><div class="qa__a"><div><p>Une photo de l'objet, un relevé bancaire, une boîte d'origine ou un certificat sont aussi des justificatifs. Tiky vous aide à rassembler ce que vous avez.</p></div></div></div>
+      <div class="qa"><button class="qa__q"><span>Mes données sont-elles en sécurité ?</span><i></i></button><div class="qa__a"><div><p>Elles sont chiffrées et hébergées en Europe. Vous pouvez les exporter ou tout supprimer à tout moment depuis les paramètres.</p></div></div></div>
+      <div class="qa"><button class="qa__q"><span>Combien de temps pour inventorier mon logement ?</span><i></i></button><div class="qa__a"><div><p>Une dizaine de secondes par objet. Commencez par les biens de valeur : bijoux, électronique, vélos. Le reste viendra au fil de vos achats.</p></div></div></div>
+      <div class="qa"><button class="qa__q"><span>Puis-je annuler Premium ?</span><i></i></button><div class="qa__a"><div><p>En un clic. Vos biens restent consultables en lecture seule, rien n'est perdu.</p></div></div></div>
+      <div class="qa"><button class="qa__q"><span>Quand l'application sort-elle ?</span><i></i></button><div class="qa__a"><div><p>La bêta privée arrive bientôt sur iOS et Android. Inscrivez-vous ci-dessous pour faire partie des premiers.</p></div></div></div>
+    </div>
+  </section>
+
+  <!-- ============ CTA ============ -->
+  <section class="join" id="join" data-morph="logo">
+    <p class="eyebrow mono center">[ 010 ] Bêta privée</p>
+    <h2 class="join__title"><span class="line"><span>Protégez ce</span></span><span class="line"><span class="grad">qui vous appartient.</span></span></h2>
+    <form class="join__form" id="join-form" novalidate>
+      <input type="email" name="email" placeholder="votre@email.fr" aria-label="Adresse email" required>
+      <button class="btn btn--glow magnetic" type="submit"><span>Je rejoins la bêta</span></button>
+    </form>
+    <p class="join__msg mono" id="join-msg" role="status"></p>
+  </section>
+
+</main>
+
+<footer class="footer" data-morph="tiky" data-dim="0.35">
+  <div class="footer__top">
+    <div class="footer__brand"><svg><use href="#tiky-logo"/></svg><p>Votre patrimoine sécurisé.</p></div>
+    <div class="footer__cols">
+      <div><h4>Produit</h4><a href="#how">Comment ça marche</a><a href="#features">Fonctionnalités</a><a href="#pricing">Tarifs</a></div>
+      <div><h4>Aide</h4><a href="#faq">FAQ</a><a href="mailto:support@tiky.app">support@tiky.app</a></div>
+      <div><h4>Légal</h4><a href="#">Mentions légales</a><a href="#">Confidentialité</a><a href="#">CGU</a></div>
+    </div>
+  </div>
+  <div class="footer__giant" aria-hidden="true">TIKY</div>
+  <div class="footer__bottom mono"><span>© 2026 Tiky</span><span>Fait en France</span></div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
+<script src="js/particles.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
